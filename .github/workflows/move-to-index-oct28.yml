@@ -12,6 +12,6 @@ jobs:
         run: |
           git config user.name "sriser1991-star"
           git config user.email "sriser1991-star@users.noreply.github.com"
-          git mv riser-s-playbook.html index.html
+          git mv -f riser-s-playbook.html index.html
           git commit -m "Replace index.html with Oct 28 Playbook export"
           git push
