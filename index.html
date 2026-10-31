@@ -2439,14 +2439,22 @@ function copyBir(id,btn){
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(txt).then(done).catch(function(){fallback();});}else{fallback();}
   function fallback(){try{var ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();}catch(e){}}
 }
+/* A ticked gate item strikes through like every other checklist in the
+   Playbook (.chk.done in the stylesheet) — the class was never applied, so
+   a saved tick changed the box but never the label. */
+function birPaint(){
+  for(var i=0;i<4;i++){var b=document.getElementById('bir-'+i);if(!b)continue;var lab=b.closest('.chk');if(lab){lab.classList.toggle('done',!!b.checked);}}
+}
 function birSave(){
   var s='';
   for(var i=0;i<4;i++){var b=document.getElementById('bir-'+i);s+=(b&&b.checked)?'1':'0';}
   try{localStorage.setItem('risers-bir',s);}catch(e){}
+  birPaint();
 }
 (function(){
   var s=''; try{s=localStorage.getItem('risers-bir')||'';}catch(e){}
   for(var i=0;i<4;i++){var b=document.getElementById('bir-'+i);if(b&&s.charAt(i)==='1'){b.checked=true;}}
+  birPaint();
 })();
 /* ===== Oct 28: Job Checklist Picker + Pages download ===== */
 function jcSelect(key){
@@ -2458,7 +2466,24 @@ function jcSelect(key){
 function openJobChecklist(key){show('job-checklists');jcSelect(key||'drywall');}
 function downloadPlaybook(btn){
   try{
-    var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+    /* Serialize a cleaned clone, not the live screen: the export must open
+       on Home like the Playbook itself — not on whichever view is on screen
+       (this button lives on the Sync view) — and a half-typed search must
+       not bake its hidden rows into the downloaded file. */
+    var clone=document.documentElement.cloneNode(true);
+    var cvs=clone.querySelectorAll('.view');
+    for(var i=0;i<cvs.length;i++){cvs[i].classList.remove('active');cvs[i].classList.remove('rev');}
+    var chome=clone.querySelector('#home');if(chome){chome.classList.add('active');}
+    var filtered=clone.querySelectorAll('.navbtn,.needrow,.htcard,.vlcard,.sec');
+    for(var j=0;j<filtered.length;j++){filtered[j].style.display='';}
+    var vn=clone.querySelector('#vlNone');if(vn){vn.style.display='none';}
+    var casc=clone.querySelectorAll('.casc');for(var k=0;k<casc.length;k++){casc[k].classList.remove('casc');casc[k].style.animationDelay='';}
+    var rip=clone.querySelectorAll('.ripple');for(var r=rip.length-1;r>=0;r--){if(rip[r].parentNode){rip[r].parentNode.removeChild(rip[r]);}}
+    var bar=clone.querySelector('#readerBar');if(bar){bar.classList.remove('on');bar.classList.remove('hasmsg');}
+    var toast=clone.querySelector('#celeToast');if(toast){toast.classList.remove('show');toast.textContent='';}
+    var lb=clone.querySelector('#lightbox');if(lb){lb.classList.remove('show');}
+    var hint=clone.querySelector('#dlHint');if(hint){hint.textContent='Known export note from the last push: photos/thumbnails inline fine; the Mario tap-sound file may not inline, so that one tap sound may be silent on the Pages copy.';}
+    var html='<!DOCTYPE html>\n'+clone.outerHTML;
     var blob=new Blob([html],{type:'text/html'});
     var url=URL.createObjectURL(blob);
     var a=document.createElement('a');a.href=url;a.download='index.html';document.body.appendChild(a);a.click();document.body.removeChild(a);
