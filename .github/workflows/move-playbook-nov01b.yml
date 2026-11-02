@@ -1,0 +1,21 @@
+name: Move Playbook Nov01b
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move export to index.html
+        run: |
+          if [ -f riser-s-playbook.html ]; then
+            git config user.name "sriser1991-star"
+            git config user.email "sriser1991-star@users.noreply.github.com"
+            git mv -f riser-s-playbook.html index.html
+            git commit -m "Replace index.html with Nov 1 second Playbook export (96 videos)"
+            git push
+          else
+            echo "No export file to move"
+          fi
