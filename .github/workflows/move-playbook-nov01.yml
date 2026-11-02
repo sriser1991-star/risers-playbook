@@ -1,0 +1,22 @@
+name: Move Playbook Nov 01
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/move-playbook-nov01.yml'
+
+jobs:
+  move:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move export to index.html
+        run: |
+          git config user.name "sriser1991-star"
+          git config user.email "sriser1991-star@users.noreply.github.com"
+          git mv -f riser-s-playbook.html index.html
+          git commit -m "Replace index.html with Nov 1 Playbook export"
+          git push
