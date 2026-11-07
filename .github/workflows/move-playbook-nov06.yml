@@ -15,6 +15,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git mv riser-s-playbook.html index.html
+          mv -f riser-s-playbook.html index.html
+          git add -A
           git commit -m "Move refreshed playbook to index.html (Nov 6, 2026)"
           git push
