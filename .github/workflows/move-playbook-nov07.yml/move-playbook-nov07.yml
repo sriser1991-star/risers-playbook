@@ -1,0 +1,24 @@
+name: Move playbook to index (Nov 7, 2026)
+
+on:
+  push:
+    paths:
+      - .github/workflows/move-playbook-nov07.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  move-playbook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Move refreshed playbook over index.html
+        run: |
+          mv -f riser-s-playbook.html index.html
+          git add -A
+          git config user.name "sriser1991-star"
+          git config user.email "sriser1991-star@users.noreply.github.com"
+          git commit -m "Move refreshed playbook to index.html (Nov 7, 2026)" || echo "Nothing to commit"
+          git push
