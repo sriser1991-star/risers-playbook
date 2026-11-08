@@ -2552,6 +2552,12 @@ function downloadPlaybook(btn){
     var vn=clone.querySelector('#vlNone');if(vn){vn.style.display='none';}
     var casc=clone.querySelectorAll('.casc');for(var k=0;k<casc.length;k++){casc[k].classList.remove('casc');casc[k].style.animationDelay='';}
     var rip=clone.querySelectorAll('.ripple');for(var r=rip.length-1;r>=0;r--){if(rip[r].parentNode){rip[r].parentNode.removeChild(rip[r]);}}
+    /* Runtime-added pieces must not bake into the export: the page's own
+       script re-adds a Mark Need Met button to every need row on load, so a
+       cloned button would double up; a Materials search result is stale the
+       moment it is written. */
+    var ndb=clone.querySelectorAll('.need-done-btn');for(var b=ndb.length-1;b>=0;b--){if(ndb[b].parentNode){ndb[b].parentNode.removeChild(ndb[b]);}}
+    var mtr=clone.querySelector('#mtresults');if(mtr){mtr.innerHTML='';}
     var bar=clone.querySelector('#readerBar');if(bar){bar.classList.remove('on');bar.classList.remove('hasmsg');}
     var toast=clone.querySelector('#celeToast');if(toast){toast.classList.remove('show');toast.textContent='';}
     var lb=clone.querySelector('#lightbox');if(lb){lb.classList.remove('show');}
